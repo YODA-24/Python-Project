@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des Patients{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Liste des Patients</h1>
+    
+    <div class="mb-3">
+        <a href="{{ url_for('add_patient') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter un patient
+        </a>
+    </div>
+    
+    {% if patients.items %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients.items %}
+                <tr>
+                    <td>{{ patient.id }}</td>
+                    <td>{{ patient.nom }}</td>
+                    <td>{{ patient.prenom }}</td>
+                    <td>{{ patient.telephone }}</td>
+                    <td>{{ patient.email }}</td>
+                    <td>
+                        <a href="{{ url_for('view_patient', id=patient.id) }}" class="btn btn-sm btn-info">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ url_for('edit_patient', id=patient.id) }}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if patients.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('list_patients', page=patients.prev_num) }}">Précédent</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in patients.iter_pages() %}
+                <li class="page-item {% if page_num == patients.page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('list_patients', page=page_num) }}">{{ page_num }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if patients.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('list_patients', page=patients.next_num) }}">Suivant</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% else %}
+    <div class="alert alert-info">Aucun patient trouvé</div>
+    {% endif %}
+</div>
+{% endblock %}
